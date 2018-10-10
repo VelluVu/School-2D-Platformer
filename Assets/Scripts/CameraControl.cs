@@ -7,13 +7,16 @@ public class CameraControl : MonoBehaviour {
     Transform player;
     bool isShaking;
     public float smoothTime = 0.3F;
+    float cameraHeight;
     private Vector3 velocity = Vector3.zero;
     private Vector3 offset;
 
     private void Start()
     {
+        cameraHeight = -10f;
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
     }
+
 
     void LateUpdate()
     {
