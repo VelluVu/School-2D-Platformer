@@ -19,9 +19,13 @@ public class MapCharacter : MonoBehaviour {
 
     private void Start()
     {
+
+        //On != null vain silloin kun tullaan jostain ruudusta takaisin karttaan
         if (GameStatus.currentLevel != null)
-        {          
+        {
+            GameObject.Find(GameStatus.currentLevel).GetComponent<LoadLevel>().Cleared(true);
             transform.position = GameObject.Find(GameStatus.currentLevel).transform.position;
+
         }
         speed = 1f;
 
@@ -31,16 +35,20 @@ public class MapCharacter : MonoBehaviour {
     {
         transform.Translate(Input.GetAxis("Horizontal") * speed * Time.deltaTime, 
             Input.GetAxis("Vertical") * speed * Time.deltaTime, 0);
+
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "LevelTrigger")
+        if (collision.CompareTag("LevelTrigger") && collision.GetComponent<LoadLevel>().cleared == false)
         {
-            if (collision.gameObject.name != GameStatus.currentLevel) {
+            if (collision.gameObject.name != GameStatus.currentLevel)
+            {
                 GameStatus.currentLevel = collision.gameObject.name;
                 SceneManager.LoadScene(collision.gameObject.GetComponent<LoadLevel>().levelToLoad);
             }
         }
     }
 }
+

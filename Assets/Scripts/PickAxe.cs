@@ -13,18 +13,21 @@ public class PickAxe : MonoBehaviour {
 
     private void Start()
     {
-        spinSpeed = 2.5f;
+        Destroy(gameObject, 10f);
+        spinSpeed = 5f;
         speed = 15f;
         throwForce.Set(speed, 0, 0);
         rb = gameObject.GetComponent<Rigidbody2D>();
         hitCol = gameObject.GetComponent<BoxCollider2D>();
         col = gameObject.GetComponent<EdgeCollider2D>();
+        
+        rb.AddForce(throwForce, ForceMode2D.Impulse);
     }
 
     private void Update()
     {
         gameObject.transform.Rotate(Vector3.back * spinSpeed);
-        rb.velocity = throwForce;
     }
-    
+
+
 }

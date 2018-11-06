@@ -9,11 +9,8 @@ public class LoadMap : MonoBehaviour {
 
 	void Start () {
         
-        SceneManager.LoadScene("Map");
+        SceneManager.LoadScene("MainMenu");
 
 	}
 	
-	void Update () {
-		
-	}
 }

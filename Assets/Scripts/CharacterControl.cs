@@ -15,9 +15,6 @@ public class CharacterControl : MonoBehaviour {
     int jumpTimes;
     Animator p_anim;
     Image filler;
-    float health;
-    float maxHealth;
-    float previousHealth;
     float counter;
     float maxCounter;
     float throwForce;
@@ -32,11 +29,12 @@ public class CharacterControl : MonoBehaviour {
         throwForce = 200f;
         throwPoint = GameObject.FindGameObjectWithTag("ThrowPoint").GetComponent<Transform>();
         filler = GameObject.FindGameObjectWithTag("Filler").GetComponent<Image>();
+        GameStatus.status.previousHealth = GameStatus.status.health;
+        
+        
         counter = 0;
         maxCounter = 1;
-        maxHealth = 100f;
-        health = maxHealth;
-        previousHealth = health;
+               
         isGround = false;
         jumpTimes = 0;
         isWalking = false;
@@ -50,6 +48,8 @@ public class CharacterControl : MonoBehaviour {
 
     private void Update()
     {
+
+        
         ThrowAxe();
         AnimationHandle();       
         Walk();
@@ -60,14 +60,16 @@ public class CharacterControl : MonoBehaviour {
         if (counter > maxCounter)
         {
             counter = 0;
-            previousHealth = health;
+            GameStatus.status.previousHealth = GameStatus.status.health;
         }
         else
         {
             counter += Time.deltaTime;
         }
 
-        filler.fillAmount = Mathf.Lerp(previousHealth / maxHealth, health / maxHealth, counter / maxCounter);
+        filler.fillAmount = Mathf.Lerp(GameStatus.status.previousHealth / GameStatus.status.maxHealth, GameStatus.status.health / GameStatus.status.maxHealth, counter / maxCounter);
+
+        
 
     }
 
@@ -75,7 +77,7 @@ public class CharacterControl : MonoBehaviour {
     {
         if (Input.GetButtonDown("Fire1"))
         {          
-            Instantiate(pickAxe, throwPoint.position, Quaternion.identity);
+            Instantiate(pickAxe, throwPoint.position, throwPoint.rotation);
             
         }
     }
@@ -85,8 +87,8 @@ public class CharacterControl : MonoBehaviour {
         
             if (Input.GetKeyDown(KeyCode.Return))
             {
-            health = maxHealth;
-            previousHealth = health;
+            GameStatus.status.health = GameStatus.status.maxHealth;
+            GameStatus.status.previousHealth = GameStatus.status.health;
         }
         
     }
@@ -105,12 +107,12 @@ public class CharacterControl : MonoBehaviour {
         
         transform.Translate(Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime, 0, 0);
         
-        if (Input.GetAxis("Horizontal") < 0)
+        if (Input.GetAxisRaw("Horizontal") < 0)
         {
             transform.localScale = new Vector3(-1, 1, 1);
             isWalking = true;
         }
-        else if (Input.GetAxis("Horizontal") > 0)
+        else if (Input.GetAxisRaw("Horizontal") > 0)
         {
             transform.localScale = new Vector3(1, 1, 1);
             isWalking = true;
@@ -192,9 +194,9 @@ public class CharacterControl : MonoBehaviour {
 
     public void TakeDamage(float dmg)
     {
-        previousHealth = filler.fillAmount * maxHealth;
+        GameStatus.status.previousHealth = filler.fillAmount * GameStatus.status.maxHealth;
         counter = 0;
-        health -= dmg;
+        GameStatus.status.health -= dmg;
         
     }
 
@@ -204,7 +206,7 @@ public class CharacterControl : MonoBehaviour {
         if (filler.fillAmount <= 0 || gameObject.transform.position.y < -100)
         {
 
-            health = 0;
+            GameStatus.status.health = 0;
             transform.position = startPos;          
             Respawn();             
                   
